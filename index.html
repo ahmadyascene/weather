@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Weather</title>
+  <link rel="icon" href="favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+  <style>
+@font-face {font-family: b; src: url(fa-brands-400.woff2);}
+@font-face {font-family: s; src: url(fa-solid-900.woff2);}
+
+::selection {color: #fff; background: #009ad880;}
+body {color: #fff; background: #1e202b;
+  font-family: 'Varela Round', system-ui; margin: 0;}
+body>* {padding-inline: .75em;}
+@media (width>=36em) {body>* {padding-inline: calc((100% - 32.25em)/2);}}
+@media (width>=48em) {body>* {padding-inline: calc((100% - 43.5em)/2);}}
+@media (width>=62em) {body>* {padding-inline: calc((100% - 58.5em)/2);}}
+@media (width>=75em) {body>* {padding-inline: calc((100% - 69.75em)/2);}}
+@media (width>=87.5em) {body>* {padding-inline: calc((100% - 81em)/2);}}
+
+a {-webkit-tap-highlight-color: #0000; text-decoration: none;}
+:is(a,.bs):active {scale: .97;}
+button {-webkit-tap-highlight-color: #0000; cursor: pointer;}
+.i,.bs {color: inherit; font-size: inherit; font-family: inherit;
+  border-radius: 2em;}
+.i {background: #1e202b; width: 100%; padding-block: 1.3em; padding-left: 1.6em;
+  border: 0; box-sizing: border-box;}
+.i:focus {outline: 0;}
+.i:focus::placeholder {color: #bfc1c8;}
+:is(.is~button,article:first-child button):not(:active) {color: #bfc1c8;}
+:is(.is~button,article:first-child button):active {color: inherit;}
+
+@keyframes pulse {0% {opacity: 0;}}
+ul.pulse::after, h2.pulse+::after {content: ''; background: #0000001a;
+  position: absolute; inset: 0;
+  animation: .5s ease-in-out infinite alternate pulse;}
+main li, main>h2, article :is(h3>span,p), main>p {
+  transition: opacity .3s cubic-bezier(.75,0,.75,.9);}
+.pulse>li, h2.pulse, h2.pulse+div :is(h3>span,p), .pulse+div+p {opacity: 0;}
+
+header {border-block: 1em solid #0000; display: flex;
+  justify-content: space-between; align-items: center;}
+header :is(a,button) {color: inherit;}
+
+header>div {padding: .25em 1em; display: flex; align-items: center;}
+h1 {font-size: inherit; margin-block: 0;}
+h1>a {padding: .25em 1em; display: inline-block;}
+h1>a:focus-visible {outline: .125em solid; border-radius: .875em;
+  outline-offset: -.125em;}
+[alt=logo] {vertical-align: bottom; width: 4em;}
+h1+p {color: #bfc1c8; font-size: .75em; padding: 0 1.333334em .333334em;
+  margin-block: 0;}
+
+header li {list-style: none;}
+header>ul a {padding: .25em 1em; border: .125em solid #0000; border-radius: 1em;
+  outline: 0; display: block; transition: color .3s, border-color .3s;}
+header>ul :is(:first-child>a,a:hover,a:focus-visible) {color: #009ad8;
+  border-color: #009ad8;}
+
+@media (width<62em) {
+  header {overflow-y: hidden; flex-flow: wrap; transition: height .3s;}
+  header:not(.he) {height: 3.375em;}
+  .he {height: var(--h);}
+  
+  header>button {background: 0; font-size: .833334em; padding: 1.5em .9em;
+    border: 0;}
+  header>button:focus-visible {outline: .15em solid; border-radius: .75em;}
+  header>button::before,header>button::after {content: ''; width: 1.5em;
+    display: block; border-top: .15em solid; border-radius: .075em;
+    transition: translate .3s cubic-bezier(.6,0,.4,1),
+      rotate .3s cubic-bezier(.6,0,.4,1);}
+  header:not(.he)>button::before {translate: 0 -200%;}
+  header:not(.he)>button::after {translate: 0 200%;}
+  .he>button::before {rotate: -45deg; translate: 0 50%;}
+  .he>button::after {rotate: 45deg; translate: 0 -50%;}
+
+  header>ul {background: #262936; width: 100%; padding: 1.25em 1em;
+    border-radius: 1em; margin-bottom: 0;}
+  header li+li {margin-top: 1em;}}
+@media (width>=62em) {header>button {display: none;}
+  header>ul {margin-block: 0; display: flex; align-items: center;
+    column-gap: 1em;}}
+
+main {padding-block: 2em; position: relative;}
+@keyframes blurry {0% {opacity: .9}}
+:has(>.blurry) {overflow: hidden; display: flex; justify-content: center;
+  position: absolute; inset: 0 0 auto; z-index: -1;}
+.blurry {transition: opacity .2s cubic-bezier(.75,0,.75,.9);}
+
+:has(>.is) {position: relative;}
+.is {padding-right: 6.075em;}
+.is~button {background: 0; font-size: inherit; padding-inline: .5em; border: 0;
+  position: absolute; inset-block: 0;}
+.is~button:focus-visible {outline: .125em solid; border-radius: .75em;}
+.is~button::before {font-family: s; display: block;}
+.is+button {right: 3.099375em;}
+.is+button::before {content: '\f00d'; font-size: 1.3em;}
+.is+button+button {padding-right: 1.6em; right: 0;}
+.is+button+button::before {content: '\f002';}
+.is::-webkit-search-cancel-button {display: none;}
+
+.is, main ul {box-shadow: 0 .25em .25em #00000080;}
+main ul {background: #1e202b; list-style: none; width: 100%;
+  min-height: 3.378125em; padding: 0 1.6em 1.3em; overflow: hidden;
+  border-bottom-left-radius: 2em; border-bottom-right-radius: 2em;
+  box-sizing: border-box; margin-block: 0; position: absolute; z-index: 1;}
+li>h2 {font-size: 1em;}
+li>h2:has(button) {margin-block: 0;}
+li>h2:not(:has(button)) {margin-block: .415em;}
+main ul button {color: #bfc1c8; background: 0; font-weight: inherit;
+  font-size: inherit; font-family: inherit; text-align: left; width: 100%;
+  padding: .415em 0; border: 0; outline: 0; transition: color .3s;}
+main ul button:is(:hover,:focus-visible), #elect {color: inherit;}
+
+main>dialog {text-align: center; max-width: min(25em,calc(100% - 3.5em));
+  border: 0; outline: 0; border-radius: .75em;}
+main>dialog::backdrop {background: #0004;}
+main>h2 {text-align: center; min-height: 1.208334em;}
+
+h2+div {overflow: hidden; border-radius: 1em; position: relative;}
+@media (width>=48em) {h2+div {display: grid;}}
+@media (width>=75em) {h2+div {grid-template-columns: 37% 1fr 1fr 1fr;}}
+article {min-height: 16.125em; overflow: auto;}
+article:nth-child(odd) {background: #262936;}
+article:nth-child(even) {background: #323544;}
+h3, h3+p {padding: 1em;}
+h3 {font-size: inherit; min-height: 1.25em; margin-block: 0;}
+article:nth-child(odd)>h3 {background: #222531;}
+article:nth-child(even)>h3 {background: #2d303d;}
+h3+p>img:first-of-type {width: 4em;}
+h3+p>span:last-of-type {color: #009ad8; margin-block: .5em 1em; display: block;}
+
+h3>span>span {float: right;}
+@media (48em<=width<75em) {h2+div {grid-template-columns: 1fr 1fr 1fr;}
+  article:first-child {grid-column: 1/-1;}
+  article:first-child>p {width: fit-content; margin-inline: auto;}}
+article:first-child>p>span:first-child {font-weight: 700; font-size: 4em;}
+article:first-child button {background: 0; font-size: 1.5em; font-family: inherit;
+  padding: 0 0 0 .25em; border: 0; border-left: .083334em solid;
+  margin-left: .25em;}
+article:first-child button:focus-visible {outline: .083334em solid;
+  border-radius: .083334em; outline-offset: .25em;}
+article:first-child img:first-of-type {vertical-align: top;
+  margin-inline: 1em -.5em;}
+article:first-child>p>:nth-last-child(-n+3) {vertical-align: bottom;
+  height: 1.3125em;}
+article:first-child>p>:nth-last-child(-n+2) {margin-left: .5em;}
+
+article+article {text-align: center;}
+article+article>p {padding-block: .6875em .625em;}
+article+article>p>span:first-of-type {font-weight: 700; display: block;}
+
+main>p {min-height: 1.25em; padding-inline: 1em; margin-bottom: 0;}
+main>p>span {margin-left: 1em; float: right;}
+
+footer {background: #262936; padding-block: 1.5em;}
+:has(>.bs) {position: relative;}
+:has(+.bs) {padding-right: 10.389375em;}
+.bs {background: #009ad8 padding-box; padding-inline: 1.5em;
+  border: .3125em solid #0000; position: absolute; inset: 0 0 0 auto;}
+.bs:focus-visible {outline: .125em solid;}
+
+.li {list-style: none; padding-left: 0; display: flex; column-gap: .3em;}
+.li a {font: 1.4em/2em b; text-align: center; width: 2em; outline: 0;
+  border-radius: 50%; display: block; transition: color .3s, background .3s;}
+.lig a:not(:hover,:focus-visible) {color: #009ad8; background: #1e202b;}
+.lig a:is(:hover,:focus-visible) {color: inherit; background: #009ad8;}
+.li ::before {vertical-align: bottom;}
+.li [href$=com]::before {content: 'AY'; font-weight: 700; font-size: .714286em;}
+.li [href*=github]::before {content: '\f09b'; font-size: 1.071429em;}
+.li [href*=linkedin]::before {content: '\f0e1';}
+.li [href*=wa]::before {content: '\f232'; font-size: 1.25em;}
+
+@media (width<62em) {.li {justify-content: center;}
+  footer>small {text-align: center; display: block;}}
+@media (width>=62em) {
+  footer {display: grid; grid-template-columns: 2fr 1fr; align-items: center;}
+  .li {justify-content: end;}
+  footer>small {padding-left: 1.2em; margin-top: 1em;}}
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <a href="#" tabindex="-1"><img src="logo.png" alt="logo"></a>
+      <hgroup>
+        <h1><a href="#">Weather</a></h1>
+        <p>Stay current</p>
+      </hgroup>
+    </div>
+    <button></button>
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">News</a></li>
+      <li><a href="#">Live Cameras</a></li>
+      <li><a href="#">Photos</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </header>
+  <main>
+    <div><img src="banner.png" alt="banner" class="blurry"></div>
+    <form>
+      <input type="search" placeholder="Location" class="i is">
+      <button type="button" hidden></button>
+      <button></button>
+      <ul hidden></ul>
+    </form>
+    <dialog>You're offline or the API's currently down</dialog>
+    <h2></h2>
+    <div>
+      <article><h3></h3><p></p></article>
+      <article><h3></h3><p></p></article>
+      <article><h3></h3><p></p></article>
+      <article><h3></h3><p></p></article>
+    </div>
+    <p></p>
+  </main>
+  <footer>
+    <form>
+      <input type="email" placeholder="Your email" class="i">
+      <button class="bs">Stay current</button>
+    </form>
+    <ul class="li lig">
+      <li><a href="https://ahmadyascene.com" target="_blank"></a></li>
+      <li><a href="https://github.com/ahmadyascene" target="_blank"></a></li>
+      <li><a href="https://linkedin.com/in/ahmadyascene" target="_blank"></a></li>
+      <li><a href="https://wa.me/+201063582917" target="_blank"></a></li>
+    </ul>
+    <small>&copy; 2025 Ahmad Yascene</small>
+  </footer>
+  <script>
+'use strict';
+let fc, sc, u=localStorage.getItem('u')||'c mm kph';
+const m=matchMedia('(width<62em)'), h=document.querySelector('header'),
+  blurry=document.querySelector('.blurry'), is=document.querySelector('.is'),
+  auto=document.querySelector('main ul'), h2=document.querySelector('main>h2'),
+  tf=new Intl.DateTimeFormat('en-US',{weekday:'short',month:'short',day:'numeric',
+    hour:'numeric',minute:'2-digit'}).format,
+  df=new Intl.DateTimeFormat('en-US',
+    {weekday:'short',month:'short',day:'numeric'}).format,
+  forecast=l=>{h2.classList.add('pulse'); fc.abort();
+    fetch(`https://api.weatherapi.com/v1/forecast.json?key=92e7819626944148b52112557252807&q=${l}&days=3&aqi=no&alerts=no`,
+      {signal:(fc=new AbortController()).signal}).then(r=>r.json())
+    .then(({location:{name,region,country,localtime},current,forecast:{forecastday}})=>{
+      let articles='', i=0; const [t,p,w]=u.split(' '), T=t=='c'?'C':'F';
+      h2.textContent=name+', '+(region?region+', ':'')+country;
+      articles+=`<article>
+        <h3><span>${tf(new Date(localtime)).replaceAll(', ',m=>i++==1?' <span>':m)}</span></span></h3>
+        <p><span>${Math.round(current['temp_'+t])}°${T}</span>
+          <button>${t=='c'?'F':'C'}</button>
+          <img src=https:${current.condition.icon} alt="${current.condition.text}">
+          <span>${current.condition.text}</span>
+          <img src="umbrella.png" alt="umbrella">
+          ${Math.round(current['precip_'+p])} ${p}
+          <svg viewBox="5 2 14 21"><path fill="#8c8c94" fill-rule="evenodd" d="M11.743 17.912a4.182 4.182 0 0 1-2.928-1.182 3.972 3.972 0 0 1-.614-4.962.743.743 0 0 1 .646-.349c.234 0 .476.095.66.275l4.467 4.355c.385.376.39.998-.076 1.275a4.216 4.216 0 0 1-2.155.588M11.855 4c.316 0 .61.14.828.395.171.2.36.416.562.647 1.857 2.126 4.965 5.684 4.965 8.73 0 3.416-2.85 6.195-6.353 6.195-3.505 0-6.357-2.78-6.357-6.195 0-3.082 2.921-6.406 4.854-8.605.242-.275.47-.535.673-.772A1.08 1.08 0 0 1 11.855 4"></path></svg>
+          ${current.humidity}%
+          <img src="wind.png" alt="wind">
+          ${current.wind_dir} ${Math.round(current['wind_'+w])} ${w}
+        </p>
+      </article>`;
+      for (const {date,day} of forecastday)
+        articles+=`<article>
+          <h3><span>${df(new Date(date))}</span></h3>
+          <p><img src=https:${day.condition.icon} alt="${day.condition.text}">
+            <span>${Math.round(day['maxtemp_'+t])}°${T}</span>
+            ${Math.round(day['mintemp_'+t])}°${T}
+            <span>${day.condition.text}</span>
+          </p>
+        </article>`;
+      h2.nextElementSibling.innerHTML=articles;
+      h2.nextElementSibling.nextElementSibling.innerHTML=`Sunrise ${forecastday[0]
+        .astro.sunrise} <span>Sunset ${forecastday[0].astro.sunset}</span>`;
+      h2.classList.remove('pulse');
+      h2.nextElementSibling.querySelector('button').onclick=()=>{
+        localStorage.setItem('u',u=u=='c mm kph'?'f in mph':'c mm kph');
+        forecast(l);};})
+    .catch(e=>{if (e.name!='AbortError') {h2.classList.remove('pulse');
+      h2.previousElementSibling.showModal();}});},
+  clear=()=>{
+    is.value=is.style.borderBottomRightRadius=is.style.borderBottomLeftRadius='';
+    auto.hidden=is.nextElementSibling.hidden=true;};
+
+if (m.matches) h.lastElementChild.inert=true;
+if (!blurry.complete) {
+  blurry.parentElement.style.background=
+    'url(blurry-banner.png) 50% 0/auto 100% no-repeat';
+  blurry.parentElement.style.animation='.5s ease-in-out infinite alternate blurry';
+  blurry.style.opacity=0;
+  blurry.onload=()=>blurry.style.opacity=blurry.parentElement.style.animation='';}
+auto.innerHTML=localStorage.getItem('auto');
+fetch('https://ipapi.co/json',{signal:(fc=new AbortController()).signal})
+.then(r=>r.json()).then(({latitude,longitude})=>forecast(latitude+','+longitude))
+.catch(e=>{if (e.name!='AbortError') forecast('cairo');});
+navigator.geolocation.getCurrentPosition(
+  ({coords:{latitude,longitude}})=>forecast(latitude+','+longitude),
+  ()=>is.focus(),{enableHighAccuracy:true,maximumAge:60000});
+
+document.onclick=({target})=>{
+  if (['BUTTON','INPUT','DIALOG'].includes(target.tagName)) return;
+  if (m.matches&&!target.closest('header>ul')) {
+    h.classList.remove('he'); h.lastElementChild.inert=true;}
+  is.style.borderBottomRightRadius=is.style.borderBottomLeftRadius='';
+  auto.hidden=true;};
+document.onkeydown=e=>{if (e.key=='/'&&e.target.tagName!='INPUT') {
+  e.preventDefault(); is.focus();}};
+document.onvisibilitychange=()=>{if (document.hidden)
+  localStorage.setItem('auto',auto.innerHTML);};
+
+onload=()=>{h.style.setProperty('--h',h.scrollHeight+'px');
+  onresize=()=>{h.style.setProperty('--h','auto');
+    h.style.setProperty('--h',h.scrollHeight+'px');};};
+m.onchange=()=>h.lastElementChild.inert=m.matches&&!h.classList.contains('he');
+h.querySelector('button').onclick=()=>{
+  h.lastElementChild.inert=!h.classList.toggle('he');};
+
+is.parentElement.onsubmit=e=>{e.preventDefault();
+  if ((is.value.trim()||!auto.hidden)&&auto.querySelector('#elect')) {
+    clear(); forecast('id:'+auto.querySelector('#elect').dataset.l);}};
+
+is.onfocus=()=>{if (auto.querySelector('#elect')) {
+  is.style.borderBottomRightRadius=is.style.borderBottomLeftRadius=0;
+  auto.hidden=false;}};
+is.oninput=()=>{is.value=is.value.replace(/ {2,}/g,' ');
+  is.nextElementSibling.hidden=!is.value;
+  if (is.value.trim()) {
+    is.style.borderBottomRightRadius=is.style.borderBottomLeftRadius=0;
+    auto.hidden=false; auto.classList.add('pulse'); sc?.abort();
+    fetch(`https://api.weatherapi.com/v1/search.json?key=92e7819626944148b52112557252807&q=${encodeURIComponent(is.value.trim())}`,
+      {signal:(sc=new AbortController()).signal})
+    .then(r=>r.json()).then(j=>{let complete='';
+      for (const {id,name,region,country} of j) complete+=
+        `<li><h2><button type=button${complete?'':' id=elect'} data-l=${id}>
+          ${name}, ${region?region+', ':''}${country}</button></h2></li>`;
+      auto.innerHTML=complete||'<li><h2>No search results found</h2></li>';
+      auto.classList.remove('pulse');})
+    .catch(e=>{if (e.name!='AbortError') {auto.classList.remove('pulse');
+      h2.previousElementSibling.showModal();}});}
+  else {is.style.borderBottomRightRadius=is.style.borderBottomLeftRadius='';
+    auto.hidden=true;}};
+is.onkeydown=({key})=>{if (key=='ArrowDown'||key=='ArrowUp') {
+  const e=auto.querySelector('#elect'); if (e) {e.id='';
+    if (key=='ArrowDown') {
+      if (e.closest('li').nextElementSibling)
+        e.closest('li').nextElementSibling.querySelector('button').id='elect';
+      else auto.firstElementChild.querySelector('button').id='elect';}
+    else {
+      if (e.closest('li').previousElementSibling)
+        e.closest('li').previousElementSibling.querySelector('button').id='elect';
+      else auto.lastElementChild.querySelector('button').id='elect';}
+    is.value=
+      auto.querySelector('#elect').textContent.trim().replace(/(?<= )\s+/g,'');}}};
+
+is.nextElementSibling.onclick=()=>{clear(); is.focus();};
+auto.onclick=({target})=>{if (target.tagName=='BUTTON') {
+  clear(); forecast('id:'+target.dataset.l);}};
+
+h2.previousElementSibling.onclick=({clientX,clientY})=>{
+  const {left,right,top,bottom}=h2.previousElementSibling.getBoundingClientRect();
+  if (clientX<left||clientX>right||clientY<top||clientY>bottom)
+    h2.previousElementSibling.close();};
+
+document.querySelector('footer>form').onsubmit=e=>e.preventDefault();
+  </script>
+</body>
+</html>
