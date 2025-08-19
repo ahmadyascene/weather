@@ -85,8 +85,8 @@ header>ul :is(:first-child>a,a:hover,a:focus-visible) {color: #009ad8;
 
 main {padding-block: 2em; position: relative;}
 @keyframes blurry {0% {opacity: .9}}
-:has(>.blurry) {overflow: hidden; display: flex; justify-content: center;
-  position: absolute; inset: 0 0 auto; z-index: -1;}
+:has(>.blurry) {min-height: 352px; overflow: hidden; display: flex;
+  justify-content: center; position: absolute; inset: 0 0 auto; z-index: -1;}
 .blurry {transition: opacity .2s cubic-bezier(.75,0,.75,.9);}
 
 :has(>.is) {position: relative;}
@@ -339,18 +339,22 @@ is.oninput=()=>{is.value=is.value.replace(/ {2,}/g,' ');
       h2.previousElementSibling.showModal();}});}
   else {is.style.borderBottomRightRadius=is.style.borderBottomLeftRadius='';
     auto.hidden=true;}};
-is.onkeydown=({key})=>{if (key=='ArrowDown'||key=='ArrowUp') {
-  const e=auto.querySelector('#elect'); if (e) {e.id='';
-    if (key=='ArrowDown') {
-      if (e.closest('li').nextElementSibling)
-        e.closest('li').nextElementSibling.querySelector('button').id='elect';
-      else auto.firstElementChild.querySelector('button').id='elect';}
-    else {
-      if (e.closest('li').previousElementSibling)
-        e.closest('li').previousElementSibling.querySelector('button').id='elect';
-      else auto.lastElementChild.querySelector('button').id='elect';}
-    is.value=
-      auto.querySelector('#elect').textContent.trim().replace(/(?<= )\s+/g,'');}}};
+is.onkeydown=e=>{
+  if (e.key=='Escape') {e.preventDefault();
+    is.style.borderBottomRightRadius=is.style.borderBottomLeftRadius='';
+    auto.hidden=true;}
+  else if (e.key=='ArrowDown'||e.key=='ArrowUp') {
+    const e=auto.querySelector('#elect'); if (e) {e.id='';
+      if (e.key=='ArrowDown') {
+        if (e.closest('li').nextElementSibling)
+          e.closest('li').nextElementSibling.querySelector('button').id='elect';
+        else auto.firstElementChild.querySelector('button').id='elect';}
+      else {
+        if (e.closest('li').previousElementSibling)
+          e.closest('li').previousElementSibling.querySelector('button').id='elect';
+        else auto.lastElementChild.querySelector('button').id='elect';}
+      is.value=auto.querySelector('#elect').textContent.trim()
+        .replace(/(?<= )\s+/g,'');}}};
 
 is.nextElementSibling.onclick=()=>{clear(); is.focus();};
 auto.onclick=({target})=>{if (target.tagName=='BUTTON') {
